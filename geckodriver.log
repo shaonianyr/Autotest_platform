@@ -1,0 +1,17 @@
+1539253231602	geckodriver	INFO	geckodriver 0.19.1
+1539253231611	geckodriver	INFO	Listening on 127.0.0.1:25436
+1539253234728	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "-marionette" "--headless" "-profile" "C:\\Users\\miduo\\AppData\\Local\\Temp\\rust_mozprofile.pB6klxPw5zxR"
+*** You are running in headless mode.
+1539253241432	Marionette	INFO	Listening on port 25447
+1539253242090	Marionette	WARN	TLS certificate errors will be ignored for this session
+1539253242158	Marionette	DEBUG	[6442450945] Frame script loaded
+1539253242313	Marionette	DEBUG	[6442450945] Frame script registered
+1539253245911	Marionette	DEBUG	[6442450945] Received DOM event beforeunload for about:blank
+1539253246158	Marionette	DEBUG	[6442450945] Received DOM event pagehide for about:blank
+JavaScript error: https://ss1.bdstatic.com/5eN1bjq8AAUYm2zgoY3K/r/www/cache/static/protocol/https/plugins/every_cookie_4644b13.js, line 4: ReferenceError: c is not defined
+1539253246432	Marionette	DEBUG	[6442450945] Received DOM event DOMContentLoaded for https://www.baidu.com/
+1539253246515	Marionette	DEBUG	[6442450945] Received DOM event pageshow for https://www.baidu.com/
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=%E6%B5%8B&json=1&p=3&sid=1458_25810_21104_26350_27244_22160&req=2&csor=1&cb=jQuery1102043348557081053607_1539253246336&_=1539253246338, line 1: TypeError: jQuery1102043348557081053607_1539253246336 is not a function
+JavaScript error: https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=%E6%B5%8B%E8%AF%95&json=1&p=3&sid=1458_25810_21104_26350_27244_22160&req=2&csor=2&pwd=%E6%B5%8B&cb=jQuery1102043348557081053607_1539253246336&_=1539253246339, line 1: TypeError: jQuery1102043348557081053607_1539253246336 is not a function
+1539253247003	Marionette	DEBUG	[6442450945] Canceled page load listener because no navigation has been detected
+1539253249030	Marionette	INFO	Stopped listening on port 25447

@@ -1,0 +1,735 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>页面元素</title>
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div id="wrapper">
+    <!-- 头部bar -->
+    <nav class="navbar navbar-default top-navbar" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            </a>
+        </div>
+
+        <ul class="nav navbar-top-links navbar-right color-white">
+            <li>
+                <a class=" pointer">退出登录</a>
+            </li>
+            <li><span class="mar-rignt-100">少年</span></li>
+        </ul>
+    </nav>
+    <!-- 头部bar end -->
+    <!-- 左侧导航  -->
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="main-menu">
+
+                <li>
+                    <a href="/admin/index"><i class="fa fa-dashboard"></i> 系统概括</a>
+                </li>
+                <li>
+                    <a href="/admin/project"><i class="fa fa-desktop"></i> 项目管理</a>
+                </li>
+                <li>
+                    <a href="/admin/page"><i class="fa fa-bar-chart-o"></i> 页面管理</a>
+                </li>
+                <li>
+                    <a class="active-menu" href="/admin/element"><i class="fa fa-qrcode"></i> 页面元素</a>
+                </li>
+
+                <li>
+                    <a href="/admin/keyword"><i class="fa fa-table"></i> 关键字库</a>
+                </li>
+                <li>
+                    <a href="/admin/testcase"><i class="fa fa-edit"></i> 测试用例 </a>
+                </li>
+                <li>
+                    <a href="/admin/result"><i class="fa fa-fw fa-file"></i> 测试结果 </a>
+                </li>
+                <li>
+                    <a href="/admin/loginConfig"><i class="fa fa-fw fa-building-o"></i> 登录配置 </a>
+                </li>
+                <li>
+                    <a href="/admin/task"><i class="fa fa-fw fa-sitemap"></i> 任务管理 </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+    <!-- 左侧导航  -->
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="page-header">页面元素</h1>
+                </div>
+            </div>
+            <!-- /. ROW  -->
+            <!-- /. 表格  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <!--<div class="panel-heading">表格名字</div>-->
+                        <div class="panel-body" style="min-height:600px">
+                            <div class="row mar-bottom-20">
+                                <div class="col-lg-12">
+                                    <div class="form-inline">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" placeholder="元素名称" id="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <select class="form-control" id="newSel">
+                                                <option>所属项目</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select class="form-control" id="newpage">
+                                                <option>所属页面</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                                <option>4</option>
+                                                <option>5</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label width-80 text-right">创建时间：</label>
+                                            <div class="form-control-custom">
+                                                <div class="input-group date form_datetime width-200" id="pzTime"
+                                                     data-date="2018-01-01" data-date-format="yyyy-mm-dd"
+                                                     data-link-field="dtp_input_start">
+                                                    <input class="form-control" size="16" type="text" value=""
+                                                           placeholder="开始时间" readonly>
+                                                    <span class="input-group-addon"><span
+                                                            class="glyphicon glyphicon-th"></span></span>
+                                                </div>
+                                                <input type="hidden" id="dtp_input_start" value=""/>
+                                            </div>
+
+                                            <div class="form-control-custom">
+                                                <div class="input-group date form_datetime width-200" id="pzqxTime"
+                                                     data-date="2018-01-01" data-date-format="yyyy-mm-dd"
+                                                     data-link-field="dtp_input_end">
+                                                    <input class="form-control" size="16" type="text" value=""
+                                                           placeholder="结束时间" readonly>
+                                                    <span class="input-group-addon"><span
+                                                            class="glyphicon glyphicon-th"></span></span>
+                                                </div>
+                                                <input type="hidden" id="dtp_input_end" value=""/>
+
+                                            </div>
+
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary" onclick="search()">搜索</button>
+                                        <button class="btn btn-info" data-toggle="modal" data-target="#newProject">新建
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                    <tr>
+                                        <th width="70px">序号</th>
+                                        <th width="80px">元素名称</th>
+                                        <th width="80px">所属项目</th>
+                                        <th width="90px">所属页面</th>
+                                        <th width="100px">创建时间</th>
+                                        <th width="70px">定位类型</th>
+                                        <th width="100px">定位值</th>
+                                        <th width="100px">备注信息</th>
+                                        <th width="70px">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="js_table"></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+
+            <!-- /. 表格  -->
+            <footer>
+                <p class="text-center"></p>
+            </footer>
+        </div>
+        <!-- /. PAGE INNER  -->
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
+
+
+<!--新建弹窗-->
+<div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建元素</h4>
+            </div>
+            <div class="modal-body">
+                <!--内容-->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">元素名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="newName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">所属项目</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newSel1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">所属页面</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newpage1">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">定位类型</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newBy">
+                                <option value="id">id</option>
+                                <option value="name">name</option>
+                                <option value="xpath">xpath</option>
+                                <option value="class name">class name</option>
+                                <option value="link text">link text</option>
+                                <option value="tag name">tag name</option>
+                                <option value="partial link text">partial link text</option>
+                                <option value="css selector">css selector</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">元素定位</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="newLocator">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">备注信息</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" id="newRemark"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10 js_message text-danger"></div>
+                    </div>
+                </form>
+                <!--内容-->
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" onclick="closeDown()">取消</button>
+                <button type="button" class="btn btn-primary" onclick="NewList()">保存</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--end 新建弹窗-->
+<!--编辑弹窗-->
+<div class="modal fade" id="newProject1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">编辑元素</h4>
+            </div>
+            <div class="modal-body">
+                <!--内容-->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">元素名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="newName1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">所属项目</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newSel2" disabled="disabled">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">所属页面</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newpage2" disabled="disabled">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">定位类型</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" id="newBy1">
+                                <option value="id">id</option>
+                                <option value="name">name</option>
+                                <option value="xpath">xpath</option>
+                                <option value="class name">class name</option>
+                                <option value="link text">link text</option>
+                                <option value="tag name">tag name</option>
+                                <option value="partial link text">partial link text</option>
+                                <option value="css selector">css selector</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-2 control-label">元素定位</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="newLocator1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label">备注信息</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" id="newRemark1"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="col-sm-2 control-label"></label>
+                        <div class="col-sm-10 js_BJmessage text-danger"></div>
+                    </div>
+                </form>
+                <!--内容-->
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="NewList1()">保存</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<!--end 编辑弹窗-->
+<!--删除询问弹窗提示-->
+<div class="modal fade" id="DelXProject1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">删除元素</h4>
+            </div>
+            <div class="modal-body">
+                <p>请确认是否删除元素</p>
+                <p class="js_DELmessage text-danger"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="determine()">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!--end 删除询问弹窗提示-->
+<script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'assets/js/morris/raphael-2.1.0.min.js' %}"></script>
+<script src="{% static 'assets/js/morris/morris.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+<script src="{% static 'assets/js/custom-scripts.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/moment-with-locales(1).js' %}"></script>
+<script>
+    //新建弹窗的所属项目下拉列表和所属项目
+    //记录点击编辑的所选的ID
+    var pageID = 0, DeleteID = 0;
+    seleList();
+    search();
+
+    function seleList() {
+        $("#newSel,#newSel1,#newSel2").find('option').remove();
+        $("#newpage,#newpage1,#newpage2").find('option').remove();
+        $("#newSel,#newSel1,#newSel2").append('<option>所属项目</option>');
+        $("#newpage,#newpage1,#newSel2").append('<option>所属页面</option>');
+        var datas = {
+            "pageSize": 99999
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/project?p=1',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (res) {
+                for (var i = 0; i < res.data.projects.length; i++) {
+                    $("#newSel,#newSel1,#newSel2").append('<option ID="' + res.data.projects[i].id + '" value="' + res.data.projects[i].name + '">' + res.data.projects[i].name + '</option>');
+                }
+            }
+        });
+    }
+
+    //搜索中所属项目联动
+    $("#newSel").on('click', function () {
+        var newNum = $("#newSel option:selected").attr('id');//所属项目
+        $("#newpage").find('option').remove();
+        $("#newpage").append('<option>所属页面</option>');
+        var datas = {
+            "pageSize": 99999
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/page?p=1',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (res) {
+                for (var i = 0; i < res.data.pages.length; i++) {
+                    if (newNum == res.data.pages[i].projectId) {
+                        $("#newpage").append('<option ID="' + res.data.pages[i].id + '" value="' + res.data.pages[i].name + '">' + res.data.pages[i].name + '</option>');
+                    }
+                }
+
+            }
+        });
+    });
+    //新建中所属项目联动
+    $("#newSel1").on('click', function () {
+        var newNum = $("#newSel1 option:selected").attr('id');//所属项目
+        $("#newpage1").find('option').remove();
+        $("#newpage1").append('<option>所属页面</option>');
+        var datas = {
+            "pageSize": 99999
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/page?p=1',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function (res) {
+
+                for (var i = 0; i < res.data.pages.length; i++) {
+                    if (newNum == res.data.pages[i].projectId) {
+                        $("#newpage1").append('<option ID="' + res.data.pages[i].id + '" value="' + res.data.pages[i].name + '">' + res.data.pages[i].name + '</option>');
+                    }
+                }
+
+            }
+        });
+    });
+
+    /*新建方法*/
+    function NewList() {
+        var newName, newpage1, newBy, newLocator, newRemark;
+        newName = $("#newName").val();                       //元素名称
+        newpage1 = $("#newpage1 option:selected").attr('id');//所属页面ID
+        newBy = $("#newBy option:selected").attr('value');   //定位类型
+        newLocator = $("#newLocator").val();                 //元素定位
+        newRemark = $("#newRemark").val();                   //备注信息
+        var datas = {
+            "name": newName,               //元素名称
+            "pageId": newpage1,            //所属页面ID
+            "by": newBy,                   //定位类型
+            "locator": newLocator,         //元素定位
+            "remark": newRemark,           //备注信息
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/element/create',
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    //重新获取下列表
+                    setTimeout(function () {
+                        //重新获取下列表
+                        search();
+                    }, 1000)
+                    //取消方法
+                    closeDown()
+                } else {
+                    $(".js_message").html(res.message);
+                }
+            }
+        });
+    }
+
+    /*新建弹窗取消*/
+    function closeDown() {
+        $('#newProject').modal('hide');
+        $(".js_message").html("");
+        $("#newName").val("");
+        $("#newSel1 option:first").prop("selected", 'selected');
+        $("#newpage1").find('option').remove();
+        $("#newpage1").append('<option>所属页面</option>');
+        $("#newBy option:first").prop("selected", 'selected');
+        $("#newLocator").val("");
+        $("#newRemark").val("");
+    }
+
+    /*搜索方法*/
+    function search() {
+        var nameTxt, name_xmT, name_xmS, creatTime1, creatTime2;
+        nameTxt = $("#name").val();           //页面名称
+        name_xmT = $("#newSel option:selected").attr('id');  //所属项目
+        name_xmS = $("#newpage option:selected").attr('id');  //所属项目
+        creatTime1 = $('#dtp_input_start').val()//开始时间
+        creatTime2 = $('#dtp_input_end').val()//结束时间
+        var datas = {
+            "name": nameTxt,
+            "projectId": name_xmT,
+            "pageId": name_xmS,
+            "startTime": creatTime1,
+            "endTime": creatTime2,
+            "pageSize": 99999
+        }
+        console.log(datas, "666");
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/element?p=1',
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                console.log(res, "5555");
+                $('#dataTables-example').dataTable().fnClearTable();//清空数据.fnClearTable();//清空数据
+                $('#dataTables-example').dataTable().fnDestroy(); //还原初始化了的datatable
+                for (var i = 0; i < res.data.elements.length; i++) {
+                    $(".js_table").append('<tr class="odd"><td class="center">' + (i + 1) + '</td><td class="center">' + res.data.elements[i].name + '</td><td class="center">' + res.data.elements[i].projectName + '</td><td class="center">' + res.data.elements[i].pageName + '</td><td class="center">' + res.data.elements[i].createTime + '</td><td class="center">' + res.data.elements[i].by + '</td><td class="center">' + res.data.elements[i].locator + '</td><td class="center">' + res.data.elements[i].remark + '</td><td class="center"><a href="javascript:void(0);" class="pointer" id="' + res.data.elements[i].id + '" onclick="editList(this)">编辑</a> - <a href="javascript:void(0);" class="pointer" Did="' + res.data.elements[i].id + '" onclick="deleteNew(this)">删除</a></td></tr>');
+                }
+                $('#dataTables-example').dataTable({
+                    "bPaginate": true,  //是否显示分页
+                    "bSort": false,     //是否支持排序功能
+                    "bAutoWidth": false, //自动宽度
+                    "serverSide": false,
+                    "pageLength": 10,
+                    "sPaginationType": "full_numbers", //分页
+                    "oLanguage": {      //多语言配置
+                        "sLengthMenu": "每页显示 10 条记录",
+                        "sZeroRecords": "对不起，查询不到任何相关数据",
+                        "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录",
+                        "sInfoEmtpy": "找不到相关数据",
+                        "sInfoFiltered": "数据表中共为 _MAX_ 条记录)",
+                        "sProcessing": "正在加载中...",
+                        "oPaginate": {
+                            "sFirst": "第一页",
+                            "sPrevious": " 上一页 ",
+                            "sNext": " 下一页 ",
+                            "sLast": " 最后一页 "
+                        }
+                    },
+                });
+
+            }
+        });
+    }
+
+    /*编辑页面*/
+    function editList(_this) {
+        $('#newProject1').modal('show');
+        var editID = $(_this).attr('id');
+        $("#newSel2,#newpage2").find('option').remove();
+        $(".js_BJmessage").html("");
+        var datas = {
+            "pageSize": 99999
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/element?p=1',
+            type: 'post',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                for (var i = 0; i < res.data.elements.length; i++) {
+                    if (res.data.elements[i].id == editID) {
+                        pageID = editID;
+                        $("#newName1").val(res.data.elements[i].name);                       //元素名称
+                        $("#newSel2").append('<option ID="' + res.data.elements[i].id + '" value="' + res.data.elements[i].projectName + '">' + res.data.elements[i].projectName + '</option>');
+                        $("#newSel2 option[value='" + res.data.elements[i].projectName + "']").attr("selected", true);//所属项目
+                        $("#newpage2").append('<option ID="' + res.data.elements[i].id + '" value="' + res.data.elements[i].pageName + '">' + res.data.elements[i].pageName + '</option>');
+                        $("#newpage2 option[value='" + res.data.elements[i].pageName + "']").attr("selected", true);//所属页面
+                        $("#newBy1 option[value='" + res.data.elements[i].by + "']").attr("selected", true);//定位类型
+                        $("#newLocator1").val(res.data.elements[i].locator);                 //元素定位
+                        $("#newRemark1").val(res.data.elements[i].remark);                   //备注信息
+
+                    }
+                }
+
+            }
+        });
+    }
+
+    /*编辑保存*/
+    function NewList1() {
+        var newName, newpage1, newBy, newLocator, newRemark;
+        newName = $("#newName1").val();                       //元素名称
+        newpage1 = $("#newpage2 option:selected").attr('id');//所属页面ID
+        newBy = $("#newBy1 option:selected").attr('value');   //定位类型
+        newLocator = $("#newLocator1").val();                 //元素定位
+        newRemark = $("#newRemark1").val();                   //备注信息
+        var datas = {
+            "name": newName,               //元素名称
+            "elementId": newpage1,            //所属页面ID
+            "by": newBy,                   //定位类型
+            "locator": newLocator,         //元素定位
+            "remark": newRemark,           //备注信息
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/element/edit/' + pageID,
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    setTimeout(function () {
+                        //重新获取下列表
+                        search();
+                    }, 1000)
+                    $('#newProject1').modal('hide')
+                } else {
+                    $(".js_BJmessage").html(res.message);
+                }
+            }
+        });
+
+    }
+
+    /*删除询问方法*/
+    function deleteNew(_this) {
+        $('#DelXProject1').modal('show');
+        DeleteID = $(_this).attr('Did');
+        $(".js_DELmessage").html("");
+    }
+
+    /*删除方法*/
+    function determine() {
+        $.ajax({
+            url: '/api/v1/element/delete/' + DeleteID,
+            type: 'get',
+            //data:formParam,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    setTimeout(function () {
+                        //重新获取下列表
+                        search();
+                    }, 1000)
+                    $('#DelXProject1').modal('hide');
+                } else {
+                    $(".js_DELmessage").html(res.message);
+                }
+            }
+        });
+    }
+
+
+    //时间转换
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    //获得当前时间
+    var newDate = new Date();
+    var endTimeT1 = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()).Format("yyyy-MM-dd");
+    $("#pzTime,#pzqxTime").attr("data-date", endTimeT1)
+    //开始时间
+    $("#pzTime").datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month",
+        format: 'yyyy-mm-dd',
+        forceParse: 0,
+        //endDate : new Date()
+    }).on('hide', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var startTime = event.date;
+        $('#pzqxTime').datetimepicker('setStartDate', startTime);
+        $('#pzqxTime').val("");
+    });
+    //结束时间
+    $("#pzqxTime").datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month",
+        format: 'yyyy-mm-dd',
+        forceParse: 0,
+        //endDate : new Date()
+    }).on('hide', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var endTime = event.date;
+        var endTimeT = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate(), 23, 59, 59).Format("yyyy-MM-dd hh:mm:ss");
+        $('#pzTime').datetimepicker('setEndDate', endTime);
+        $("#dtp_input_end").attr("value", endTimeT)
+    });
+</script>
+</body>
+
+</html>

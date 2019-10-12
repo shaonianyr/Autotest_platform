@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>项目管理</title>
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div id="wrapper">
+    <!-- 头部bar -->
+    <nav class="navbar navbar-default top-navbar" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            </a>
+        </div>
+
+        <ul class="nav navbar-top-links navbar-right color-white">
+            <li>
+                <a class=" pointer">退出登录</a>
+            </li>
+            <li><span class="mar-rignt-100">少年</span></li>
+        </ul>
+    </nav>
+    <!-- 头部bar end -->
+    <!-- 左侧导航  -->
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="main-menu">
+
+                <li>
+                    <a href="/admin/index"><i class="fa fa-dashboard"></i> 系统概括</a>
+                </li>
+                <li>
+                    <a class="active-menu" href="/admin/project"><i class="fa fa-desktop"></i> 项目管理</a>
+                </li>
+                <li>
+                    <a href="/admin/page"><i class="fa fa-bar-chart-o"></i> 页面管理</a>
+                </li>
+                <li>
+                    <a href="/admin/element"><i class="fa fa-qrcode"></i> 页面元素</a>
+                </li>
+
+                <li>
+                    <a href="/admin/keyword"><i class="fa fa-table"></i> 关键字库</a>
+                </li>
+                <li>
+                    <a href="/admin/testcase"><i class="fa fa-edit"></i> 测试用例 </a>
+                </li>
+                <li>
+                    <a href="/admin/result"><i class="fa fa-fw fa-file"></i> 测试结果 </a>
+                </li>
+                <li>
+                    <a href="/admin/loginConfig"><i class="fa fa-fw fa-building-o"></i> 登录配置 </a>
+                </li>
+                <li>
+                    <a href="/admin/task"><i class="fa fa-fw fa-sitemap"></i> 任务管理 </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+    <!-- 左侧导航  -->
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="page-header">
+                        项目管理
+                    </h1>
+                </div>
+            </div>
+            <!-- /. ROW  -->
+            <!-- /. 表格  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <!--<div class="panel-heading">表格名字</div>-->
+                        <div class="panel-body" style="min-height:600px">
+                            <div class="row mar-bottom-20">
+                                <div class="col-lg-12">
+                                    <div class="form-inline">
+                                        <div class="form-group">
+                                            <input id="pName" type="text" class="form-control" placeholder="项目名称">
+                                        </div>
+                                        <div class="form-group">
+                                            <!--<label class="sr-only" for="name">名称</label>-->
+                                            <input type="text" class="form-control" placeholder="创建人">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label width-80 text-right">创建时间：</label>
+                                            <div class="form-control-custom">
+                                                <div class="input-group date form_datetime width-200" id="pzTime"
+                                                     data-date="2018-01-01" data-date-format="yyyy-mm-dd"
+                                                     data-link-field="dtp_input_start">
+                                                    <input class="form-control" size="16" type="text" placeholder="开始时间"
+                                                           value="" readonly>
+                                                    <span class="input-group-addon"><span
+                                                            class="glyphicon glyphicon-th"></span></span>
+                                                </div>
+                                                <input type="hidden" id="dtp_input_start" value=""/>
+                                            </div>
+
+                                            <div class="form-control-custom">
+                                                <div class="input-group date form_datetime width-200" id="pzqxTime"
+                                                     data-date="2018-01-01" data-date-format="yyyy-mm-dd"
+                                                     data-link-field="dtp_input_end">
+                                                    <input class="form-control" size="16" type="text" placeholder="结束时间"
+                                                           value="" readonly>
+                                                    <span class="input-group-addon"><span
+                                                            class="glyphicon glyphicon-th"></span></span>
+                                                </div>
+                                                <input type="hidden" id="dtp_input_end" value=""/>
+
+                                            </div>
+
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary" onclick="search()">搜索</button>
+                                        <button class="btn btn-info" data-toggle="modal" onclick="create()">新建
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!--新建弹窗-->
+                            <div class="modal fade" id="newProject" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" onclick="cancel()">
+                                                &times;
+                                            </button>
+                                            <h4 class="modal-title" id="myModalLabel">
+                                                新建项目
+                                            </h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!--内容-->
+                                            <form class="form-horizontal" role="form">
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">项目名称</label>
+                                                    <div class="col-sm-10">
+                                                        <input id="projectName" type="text" class="form-control"
+                                                               placeholder="20个字符内"
+                                                               maxlength="20">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">备注信息</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea id="remark" class="form-control" rows="4"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label"></label>
+                                                    <div id='message' class="col-sm-10 js_message text-danger"></div>
+                                                </div>
+
+                                            </form>
+                                            <!--内容-->
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" onclick="cancel()">
+                                                取消
+                                            </button>
+                                            <button id='save' type="button" class="btn btn-primary" onclick="save()">
+                                                确定
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal -->
+                            </div>
+                            <!--end 新建弹窗-->
+                            <!--删除询问弹窗提示-->
+                            <div class="modal fade" id="delProject" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel1"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" onclick="cancel()">
+                                                &times;
+                                            </button>
+                                            <h4 class="modal-title">删除项目</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>请确认是否删除项目</p>
+                                            <p id='delMessage' class="js_DELmessage text-danger"></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" onclick="cancel()">取消
+                                            </button>
+                                            <button type="button" class="btn btn-primary" id="delButton">确定
+                                            </button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>项目名称</th>
+                                        <th>创建人</th>
+                                        <th>创建时间</th>
+                                        <th>项目环境</th>
+                                        <th>备注信息</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="js_table">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+
+            <!-- /. 表格  -->
+            <footer>
+                <p class="text-center"></p>
+            </footer>
+        </div>
+        <!-- /. PAGE INNER  -->
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
+
+<script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'assets/js/morris/raphael-2.1.0.min.js' %}"></script>
+<script src="{% static 'assets/js/morris/morris.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+<script src="{% static 'assets/js/custom-scripts.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+<script src="{% static 'assets/datetimepicker/moment-with-locales(1).js' %}"></script>
+
+<script>
+    search();
+
+    function cancel() {
+        $("#delProject").modal("hide");
+        $("#newProject").modal("hide");
+        $("#projectName").val();
+        $("#remark").val();
+        $("#message").html("");
+        $("#delMessage").html("");
+    }
+
+    function create() {
+        $("#save").attr("onclick", "save()");
+        $("#myModalLabel").html("新建项目");
+        $("#newProject").modal("show");
+        $("#projectName").val();
+        $("#remark").val();
+        $("#message").html("");
+    }
+
+    function edit(id) {
+        $("#message").html("");
+        $("#myModalLabel").html("编辑项目");
+        $("#save").attr("onclick", "editSave(" + id + ")");
+        $.ajax({
+            url: '/api/v1/project/' + id,
+            type: 'post',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    $("#projectName").val(res.data.name);
+                    $("#remark").val(res.data.remark);
+                } else {
+                    $("#message").html(res.message);
+                }
+                $("#newProject").modal("show")
+            }
+        });
+    }
+
+    function editSave(id) {
+        var projectName, remark;
+        projectName = $("#projectName").val();
+        remark = $("#remark").val();
+        var data = JSON.stringify({"name": projectName, "remark": remark});
+        $.ajax({
+            url: '/api/v1/project/edit/' + id,
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    $("#newProject").modal("hide")
+                    setTimeout(function () {
+                        search();
+                    }, 1000)
+                } else {
+                    $("#message").html(res.message);
+                }
+            }
+        });
+    }
+
+    function isDel(id) {
+        $("#delButton").attr("onclick", "del(" + id + ")")
+        $("#delProject").modal("show")
+    }
+
+    function del(id) {
+        $.ajax({
+            url: '/api/v1/project/delete/' + id,
+            type: 'post',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    $("#delProject").modal("hide")
+                    setTimeout(function () {
+                        search();
+                    }, 1000)
+                } else {
+                    $("#delMessage").html(res.message);
+                }
+            }
+        });
+    }
+
+    function search() {
+        $("#message").html();
+        var projectName, creator, creatTime1, creatTime2;
+        projectName = $("#pName").val();
+        creator = $("#pName").val();//页面名称
+        creatTime1 = $('#dtp_input_start').val()//开始时间
+        creatTime2 = $('#dtp_input_end').val()//结束时间
+        var datas = {
+            "name": projectName,
+            "creator": creator,
+            "startTime": creatTime1,
+            "endTime": creatTime2,
+            "pageSize": 99999
+        }
+        var data = JSON.stringify(datas);
+        $.ajax({
+            url: '/api/v1/project?p=1',
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                //重新获取下列表
+                $('#dataTables-example').dataTable().fnClearTable();//清空数据.fnClearTable();//清空数据
+                $('#dataTables-example').dataTable().fnDestroy(); //还原初始化了的datatable
+                var tr = '';
+                for (var i = 0; i < res.data.projects.length; i++) {
+                    tr += '<tr>';
+                    tr += '<td class="center">' + (i + 1) + '</td>';
+                    tr += '<td class="center">' + res.data.projects[i].name + '</td>';
+                    tr += '<td class="center">' + res.data.projects[i].creatorName + '</td>'
+                    tr += '<td class="center">' + res.data.projects[i].createTime + '</td>';
+                    tr += '<td class="center">' + res.data.projects[i].environments.length + '</td>'
+                    tr += '<td class="center">' + res.data.projects[i].remark + '</td>';
+                    tr += '<td class="center">';
+                    tr += '<a href="/admin/project/' + res.data.projects[i].id + '" class="pointer">配置</a>';
+                    tr += '-';
+                    tr += '<a href="javascript:void(0);" class="pointer" onclick="edit(' + res.data.projects[i].id + ')">编辑</a>';
+                    tr += '-';
+                    tr += '<a href="javascript:void(0);" class="pointer" onclick="isDel(' + res.data.projects[i].id + ')">删除</a>'
+                    tr += '</td></tr>)';
+                }
+                $(".js_table").append(tr)
+                $('#dataTables-example').dataTable({
+                    "bPaginate": true,  //是否显示分页
+                    "bSort": false,     //是否支持排序功能
+                    "bAutoWidth": false, //自动宽度
+                    "serverSide": false,
+                    "pageLength": 10,
+                    "sPaginationType": "full_numbers", //分页
+                    "oLanguage": {      //多语言配置
+                        "sLengthMenu": "每页显示 10 条记录",
+                        "sZeroRecords": "对不起，查询不到任何相关数据",
+                        "sInfo": "当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录",
+                        "sInfoEmtpy": "找不到相关数据",
+                        "sInfoFiltered": "数据表中共为 _MAX_ 条记录)",
+                        "sProcessing": "正在加载中...",
+                        "oPaginate": {
+                            "sFirst": "第一页",
+                            "sPrevious": " 上一页 ",
+                            "sNext": " 下一页 ",
+                            "sLast": " 最后一页 "
+                        }
+                    },
+                });
+            }
+        });
+    }
+
+    function save() {
+        var projectName, remark;
+        projectName = $("#projectName").val();
+        remark = $("#remark").val();
+        var data = JSON.stringify({"name": projectName, "remark": remark});
+        $.ajax({
+            url: '/api/v1/project/create',
+            type: 'post',
+            contentType: 'application/json',
+            data: data,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    $("#newProject").modal("hide")
+                    setTimeout(function () {
+                        search();
+                    }, 1000)
+                } else {
+                    $("#message").html(res.message);
+                }
+            }
+        });
+    }
+</script>
+<script>
+    //时间转换
+    Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    //获得当前时间
+    var newDate = new Date();
+    var endTimeT1 = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()).Format("yyyy-MM-dd");
+    $("#pzTime,#pzqxTime").attr("data-date", endTimeT1)
+    //开始时间
+    $("#pzTime").datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month",
+        format: 'yyyy-mm-dd',
+        forceParse: 0,
+        //endDate : new Date()
+    }).on('hide', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var startTime = event.date;
+        $('#pzqxTime').datetimepicker('setStartDate', startTime);
+        $('#pzqxTime').val("");
+    });
+    //结束时间
+    $("#pzqxTime").datetimepicker({
+        language: 'zh-CN',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month",
+        format: 'yyyy-mm-dd',
+        forceParse: 0,
+        //endDate : new Date()
+    }).on('hide', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var endTime = event.date;
+        var endTimeT = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate(), 23, 59, 59).Format("yyyy-MM-dd hh:mm:ss");
+        $('#pzTime').datetimepicker('setEndDate', endTime);
+        $("#dtp_input_end").attr("value", endTimeT)
+    });
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>POM - 自动化测试平台</title>
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/font-awesome.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/js/morris/morris-0.4.3.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'assets/css/custom-styles.css' %}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div id="wrapper">
+    <!-- 头部bar -->
+    <nav class="navbar navbar-default top-navbar" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            </a>
+        </div>
+        <ul class="nav navbar-top-links navbar-right color-white">
+            <li>
+                <a href="/login/" class=" pointer">退出登录</a>
+            </li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
+        </ul>
+    </nav>
+    <!-- 头部bar end -->
+    <!-- 左侧导航  -->
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="main-menu">
+                <li>
+                    <a class="active-menu" href="/admin/index"><i class="fa fa-dashboard"></i> 系统概括</a>
+                </li>
+                <li>
+                    <a href="/admin/project"><i class="fa fa-desktop"></i> 项目管理</a>
+                </li>
+                <li>
+                    <a href="/admin/page"><i class="fa fa-bar-chart-o"></i> 页面管理</a>
+                </li>
+                <li>
+                    <a href="/admin/element"><i class="fa fa-qrcode"></i> 页面元素</a>
+                </li>
+
+                <li>
+                    <a href="/admin/keyword"><i class="fa fa-table"></i> 关键字库</a>
+                </li>
+                <li>
+                    <a href="/admin/testcase"><i class="fa fa-edit"></i> 测试用例 </a>
+                </li>
+                <li>
+                    <a href="/admin/result"><i class="fa fa-fw fa-file"></i> 测试结果 </a>
+                </li>
+                <li>
+                    <a href="/admin/loginConfig"><i class="fa fa-fw fa-building-o"></i> 登录配置 </a>
+                </li>
+                <li>
+                    <a href="/admin/task"><i class="fa fa-fw fa-sitemap"></i> 任务管理 </a>
+                </li>
+            </ul>
+        </div>
+
+    </nav>
+    <!-- 左侧导航  -->
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="page-header">
+                        系统概括
+                    </h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="bar-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="line-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /. 表格  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <!--<div class="panel-heading">表格名字</div>-->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>用例数量</th>
+                                        <th>总成功数</th>
+                                        <th>总失败数</th>
+                                        <th>今天成功数</th>
+                                        <th>今天失败数</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="Summary">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+
+            <!-- /. 表格  -->
+            <footer>
+                <p class="text-center"></p>
+            </footer>
+        </div>
+        <!-- /. PAGE INNER  -->
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
+<script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'assets/js/morris/raphael-2.1.0.min.js' %}"></script>
+<script src="{% static 'assets/js/morris/morris.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'assets/js/dataTables/dataTables.bootstrap.js' %}"></script>
+<script src="{% static 'assets/js/custom-scripts.js' %}"></script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script>
+    init();
+
+    function init() {
+        $("#Summary").find("tr").remove();
+        $.ajax({
+            url: '/api/v1/projectSummary',
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    var tr = '';
+                    for (var i = 0; i < res.data.length; i++) {
+                        tr += "<tr class='odd'>";
+                        tr += "<td class='center'>" + res.data[i].projectName + "</td>";
+                        tr += '<td class="center">' + res.data[i].testcaseNum + '</td>';
+                        tr += "<td class='center'>" + res.data[i].successfulTotal + "</td>";
+                        tr += '<td class="center">' + res.data[i].failureTotal + '</td>';
+                        tr += "<td class='center'>" + res.data[i].successfulToday + "</td>";
+                        tr += '<td class="center">' + res.data[i].failureToday + '</td>';
+                        tr += '</tr>';
+                    }
+                    $("#Summary").append(tr);
+                }
+            }
+        });
+        loadingChar();
+        loadLineChar();
+    }
+
+
+    function loadLineChar() {
+        $.ajax({
+            url: '/api/v1/lineChar',
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    var title = {
+                        text: '测试结果趋势'
+                    };
+                    var xAxis = {
+                        categories: res.data.days
+                    };
+                    var yAxis = {
+                        title: {
+                            text: '次数'
+                        }
+                    };
+                    var plotOptions = {
+                        line: {
+                            dataLabels: {
+                                enabled: true
+                            },
+                            enableMouseTracking: false
+                        }
+                    };
+                    var series = res.data.data
+                    var json = {};
+                    json.title = title;
+                    json.xAxis = xAxis;
+                    json.yAxis = yAxis;
+                    json.series = series;
+                    json.plotOptions = plotOptions;
+                    $('#line-chart').highcharts(json);
+                }
+            }
+        });
+
+
+    }
+
+    function loadingChar() {
+        $.ajax({
+            url: '/api/v1/barChar',
+            type: 'POST',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    var chart = {
+                        type: 'column'
+                    };
+                    var title = {
+                        text: '项目概括'
+                    };
+                    var xAxis = {
+                        categories: res.data.project,
+                        crosshair: true
+                    };
+                    var yAxis = {
+                        min: 0,
+                        title: {
+                            text: '次数'
+                        }
+                    };
+                    var tooltip = {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f} </b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    };
+                    var plotOptions = {
+                        column: {
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    };
+                    var credits = {
+                        enabled: false
+                    };
+
+                    var series = res.data.data
+
+                    var json = {};
+                    json.chart = chart;
+                    json.title = title;
+                    json.tooltip = tooltip;
+                    json.xAxis = xAxis;
+                    json.yAxis = yAxis;
+                    json.series = series;
+                    json.plotOptions = plotOptions;
+                    json.credits = credits;
+                    $('#bar-chart').highcharts(json);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
