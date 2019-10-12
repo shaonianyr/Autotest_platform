@@ -12,6 +12,47 @@
 
 </head>
 <body>
+<div class="alert"></div>
+    <style type="text/css">
+                    .alert {
+                        display: none;
+                        position: fixed;
+                        top: 3%;
+                        left: 50%;
+                        min-width: 300px;
+                        max-width: 600px;
+                        transform: translate(-50%,-50%);
+                        z-index: 99999;
+                        text-align: center;
+                        padding: 15px;
+                        border-radius: 3px;
+                    }
+
+                    .alert-success {
+                        color: #3c763d;
+                        background-color: #dff0d8;
+                        border-color: #d6e9c6;
+                    }
+
+                    .alert-info {
+                        color: #31708f;
+                        background-color: #d9edf7;
+                        border-color: #bce8f1;
+                    }
+
+                    .alert-warning {
+                        color: #8a6d3b;
+                        background-color: #fcf8e3;
+                        border-color: #faebcc;
+                    }
+
+                    .alert-danger {
+                        color: #a94442;
+                        background-color: #f2dede;
+                        border-color: #ebccd1;
+                    }
+                </style>
+<!--  <div role="alert" class="el-message el-message--error" style="z-index: 2012;"><i class="el-message__icon el-icon-error"></i><p class="el-message__content">验证码发送失败</p> -->
 <div id="wrapper">
     <!-- 头部bar -->
     <nav class="navbar navbar-default top-navbar" role="navigation">
@@ -22,15 +63,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            <a class="navbar-brand" href="/admin/index">POM - 自动化测试平台
             </a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right color-white">
             <li>
-                <a class=" pointer">退出登录</a>
+                <a href="/login/" class=" pointer">退出登录</a>
             </li>
-            <li><span class="mar-rignt-100">少年</span></li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
         </ul>
     </nav>
     <!-- 头部bar end -->
@@ -273,9 +314,9 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">
                     否
                 </button>
-                <button type="button" class="btn btn-primary" id="gotoResult">
+                <a type="button" class="btn btn-primary" href="/admin/result">
                     是
-                </button>
+                </a>
 
             </div>
         </div>
@@ -295,6 +336,7 @@
 <script src="{% static 'assets/datetimepicker/moment-with-locales(1).js' %}"></script>
 <script>
     var DeleteID = 0;
+    var CopyID = 0;
     seleList();
     search();
 
@@ -363,13 +405,14 @@
                     tr += '<td class="center">';
                     tr += '<a href="javascript:void(0);" class="pointer" onclick="running(' + res.data.testcase[i].projectId + ',' + res.data.testcase[i].id + ')">运行</a> - ';
                     tr += '<a href="/admin/testcase/' + res.data.testcase[i].id + '" class="pointer">编辑</a> - ';
-                    tr += '<a href="javascript:void(0);" class="pointer" Did="' + res.data.testcase[i].id + '" onclick="deleteNew(this)">删除</a>';
+                    tr += '<a href="javascript:void(0);" class="pointer" Did="' + res.data.testcase[i].id + '" onclick="deleteNew(this)">删除</a> - ';
+                    tr += '<a href="javascript:void(0);" class="pointer" Cid="' + res.data.testcase[i].id + '" onclick="copyNew(this)">复制</a>';
 
                 }
                 $(".js_table").append(tr);
                 $('#dataTables-example').dataTable({
                     "bPaginate": true,  //是否显示分页
-                    "bSort": false,     //是否支持排序功能
+                    "bSort": true,     //是否支持排序功能
                     "bAutoWidth": false, //自动宽度
                     "serverSide": false,
                     "pageLength": 10,
@@ -394,6 +437,56 @@
         });
     }
 
+    /*复制方法*/
+    function copyNew(_this) {
+        // $('#CopyProject1').modal('show');
+        CopyID = $(_this).attr('Cid');
+        // $(".js_Copymessage").html("");
+        $.ajax({
+            url: '/api/v1/testcase/copy/' + CopyID,
+            type: 'post',
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+
+                    var data = {
+                        "projectId": res.data.projectId,
+                        "level": res.data.level,
+                        "title": res.data.title + ' - 副本',
+                        "remark": res.data.remark,
+                        "beforeLogin": res.data.logins,
+                        "steps": res.data.steps,
+                        "parameter": res.data.parameter,
+                        "checkType": res.data.checkType,
+                        "checkValue": res.data.checkValue,
+                        "checkText": res.data.checkText,
+                        "selectText": res.data.selectText,
+                    }
+
+                    $.ajax({
+                        url: '/api/v1/testcase/create',
+                        type: 'post',
+                        dataType: 'json',
+                        data: JSON.stringify(data),
+                        success: function (res) {
+                            if (res.code == 200) {
+                                    $('.alert').html('复制新建成功').addClass('alert-success').show().delay(1500).fadeOut();
+                                    setTimeout(function () {
+                                    //重新获取下列表
+                                    search();
+                                    }, 1000)
+                            } else {
+                                $('.alert').html(res.message).addClass('alert-warning').show().delay(1500).fadeOut();
+                            }
+                        }
+                    });
+                }
+                else
+                    $('.alert').html(res.message);
+            }
+        });
+    }
+
     /*删除询问方法*/
     function deleteNew(_this) {
         $('#DelXProject1').modal('show');
@@ -411,6 +504,7 @@
             dataType: 'json',
             success: function (res) {
                 if (res.code == 200) {
+                    $('.alert').html('删除成功').addClass('alert-success').show().delay(1500).fadeOut();
                     setTimeout(function () {
                         //重新获取下列表
                         search();
@@ -418,6 +512,7 @@
                     $('#DelXProject1').modal('hide');
                 } else {
                     $(".js_DELmessage").html(res.message);
+                    $('.alert').html(res.message).addClass('alert-warning').show().delay(1500).fadeOut();
                 }
             }
         });
@@ -475,6 +570,10 @@
             $("#message").html("请选择运行的浏览器");
             return;
         }
+        if (environments == null) {
+            $("#message").html("请选择运行的环境");
+            return;
+        }
         $.ajax({
             url: '/api/v1/testcase/running/' + testcaseId,
             type: 'post',
@@ -484,18 +583,19 @@
                 if (res.code == 200) {
                     $("#running").modal("hide")
                     $("#tjcg").modal("show");
-                    $("#gotoResult").attr("onclick", "toResult(" + res.data + ")")
-                } else {
+                    // $("#gotoResult").attr("onclick", "toResult(" + res.data + ")")
+                } 
+                else {
                     $("#message").html(res.message);
                 }
             }
         });
     }
 
-    function toResult(result) {
-        $("#tjcg").modal("hide")
-        window.open("/admin/result/" + result)
-    }
+    // function toResult(result) {
+    //     $("#tjcg").modal("hide")
+    //     window.open("/admin/result/" + result)
+    // }
 
     //时间转换
     Date.prototype.Format = function (fmt) { //author: meizz

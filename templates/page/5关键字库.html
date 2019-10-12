@@ -22,15 +22,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            <a class="navbar-brand" href="/admin/index">POM - 自动化测试平台
             </a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right color-white">
             <li>
-                <a class=" pointer">退出登录</a>
+                <a href="/login/" class=" pointer">退出登录</a>
             </li>
-            <li><span class="mar-rignt-100">少年</span></li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
         </ul>
     </nav>
     <!-- 头部bar end -->
@@ -276,7 +276,7 @@
                 }
                 $('#dataTables-example').dataTable({
                     "bPaginate": true,  //是否显示分页
-                    "bSort": false,     //是否支持排序功能
+                    "bSort": true,     //是否支持排序功能
                     "bAutoWidth": false, //自动宽度
                     "serverSide": false,
                     "pageLength": 10,
@@ -370,7 +370,7 @@
                 }
                 $('#dataTables-example').dataTable({
                     "bPaginate": true,  //是否显示分页
-                    "bSort": false,     //是否支持排序功能
+                    "bSort": true,     //是否支持排序功能
                     "bAutoWidth": false, //自动宽度
                     "serverSide": false,
                     "pageLength": 10,

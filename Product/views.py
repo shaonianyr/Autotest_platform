@@ -1,154 +1,20 @@
 import django.utils.timezone as timezone
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
-
-from MiDuoTester.helper.Http import *
-from MiDuoTester.helper.util import *
+from Autotest_platform.helper.Http import *
+from Autotest_platform.helper.util import *
 from Product.models import Element as element
 from Product.models import Environment as environment
 from Product.models import Keyword as keyword
 from Product.models import Page as page
 from Product.models import Project as project
-from Product.models import Result, Task, LoginConfig, EnvironmentLogin, User as user
+from Product.models import Result, Task, LoginConfig, EnvironmentLogin
 from Product.models import TestCase as testcase, Browser
 from .tasks import SplitTask
-
+import request
+import random
 
 # Create your views here.
-class User:
-
-    @staticmethod
-    @post
-    def create(request):
-        try:
-            parameter = get_request_body(request)
-        except ValueError:
-            return JsonResponse.BadRequest("json格式错误")
-        u = user()
-        u.userName = parameter.get("userName", "")
-        u.password = parameter.get("password", "")
-        u.email = parameter.get("email", "")
-        try:
-            u.clean()
-        except ValidationError as ve:
-            return JsonResponse.BadRequest(','.join(ve.messages))
-        if user.objects.filter(userName__iexact=u.userName):
-            return JsonResponse.BadRequest("该账号已存在,请修改后重试")
-        u.password = md5(u.password)
-        try:
-            u.save()
-        except:
-            return JsonResponse.ServerError("服务器发送错误")
-        return JsonResponse.OK()
-
-    @staticmethod
-    @post
-    @check_login
-    def edit(request):
-        u = get_model(user, id=request.session.get(Session.USER, 0))
-        if not u:
-            return JsonResponse(404, '所登陆的账号无法找到')
-        try:
-            parameter = get_request_body(request)
-        except ValueError:
-            return JsonResponse.BadRequest("json格式错误")
-        oldPassword = parameter.get("oldPassword", "")
-        newPassword = parameter.get("newPassword", "")
-        u.email = parameter.get("email", u.email)
-        u.nickname = parameter.get("nickname", u.nickname)
-        if md5(oldPassword) != u.password:
-            return JsonResponse.BadRequest('旧密码错误')
-        u.password = newPassword
-        try:
-            u.clean()
-        except ValidationError as ve:
-            return JsonResponse.BadRequest(','.join(ve.messages))
-        if user.objects.filter(userName__iexact=u.userName).exclude(id=u.id):
-            return JsonResponse.BadRequest("该账号已存在,请修改后重试")
-        u.password = md5(u.password)
-        try:
-            u.save()
-        except:
-            return JsonResponse.ServerError("服务器发送错误")
-        return JsonResponse.OK()
-
-    @staticmethod
-    def find(request):
-        try:
-            parameter = get_request_body(request)
-        except ValueError:
-            return JsonResponse.BadRequest("json格式错误")
-        page_index = request.GET.get("p", 1)
-        page_index = int(page_index) if str(page_index).isdigit() and int(page_index) >= 1 else 1
-        page_size = parameter.get("pageSize", 10)
-        page_size = int(page_size) if str(page_size).isdigit() and int(page_size) >= 1 else 10
-        start_time = "2018-01-01 00:00:00"
-        start_time = parameter.get("startTime", start_time) if parameter.get("startTime", start_time) else start_time
-        now = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
-        end_time = parameter.get("endTime", now) if parameter.get("endTime", now) else now
-        nickname = parameter.get("nickname") if parameter.get("nickname", "") else ""
-        userName = parameter.get("userName") if parameter.get("userName", "") else ""
-        try:
-            users = get_model(user, get=False, createTime__lt=end_time, createTime__gt=start_time,
-                              nickname__contains=nickname, userName__contains=userName)
-            total = len(users)
-        except:
-            return JsonResponse(400, "时间参数错误")
-        users = users[(page_index - 1) * page_size:page_index * page_size]
-        u_list = list()
-        for u in users:
-            dic = model_to_dict(u, ["id", 'userName', 'nickname', 'email'])
-            dic["createTime"] = u.createTime.strftime('%Y-%m-%d %H:%M:%S')
-            u_list.append(dic)
-        result = dict()
-        result["total"] = total
-        result["users"] = u_list
-        return JsonResponse.OK(message="ok", data=result)
-
-    @staticmethod
-    def get(request, user_id):
-        u = get_model(user, id=user_id)
-        if not u:
-            return JsonResponse.BadRequest("该用户不存在")
-        result = model_to_dict(u, ["id", 'userName', 'nickname', 'email'])
-        result["createTime"] = u.createTime.strftime('%Y-%m-%d %H:%M:%S')
-        return JsonResponse.OK(message="ok", data=result)
-
-    @staticmethod
-    @post
-    def login(request):
-        try:
-            parameter = get_request_body(request)
-        except ValueError:
-            return JsonResponse.BadRequest("json格式错误")
-        userName = parameter.get("userName", "")
-        password = parameter.get("password", "")
-        try:
-            u = user.objects.get(userName__iexact=userName, password__exact=md5(password))
-        except:
-            return JsonResponse(400, '账号或密码错误')
-        request.session[Session.USER] = u.id
-        return JsonResponse.OK()
-
-    @staticmethod
-    @check_login
-    def checkLogin(request):
-        u = get_model(user, id=request.session.get(Session.USER, 0))
-        if not u:
-            return JsonResponse(400, '未找到登陆信息')
-        else:
-            return JsonResponse(200, 'ok', model_to_dict(u, ["id", "userName", 'nickname', 'email']))
-
-    @staticmethod
-    @check_login
-    def logout(request):
-        u = get_model(user, id=request.session.get(Session.USER, 0))
-        if not u:
-            return JsonResponse(400, '未找到登陆信息')
-        else:
-            del request.session[Session.USER]
-        return JsonResponse.OK()
-
 
 class Project:
     @staticmethod
@@ -159,12 +25,8 @@ class Project:
             parameter = get_request_body(request)
         except ValueError:
             return JsonResponse.BadRequest("json格式错误")
-        # u = get_model(user, id=request.session.get(Session.USER, 0))
-        # if not u:
-        #     return JsonResponse(400, '未找到登陆信息')
         p = project()
-        p.creator = 1
-        # p.creator = u.id
+        p.creator = request.user.username
         p.name = parameter.get("name", "")
         p.remark = parameter.get("remark", "")
         try:
@@ -257,8 +119,7 @@ class Project:
         for p in projects:
             dic = model_to_dict(p, ["id", 'name', 'creator', 'remark'])
             dic["createTime"] = p.createTime.strftime('%Y-%m-%d %H:%M:%S')
-            u = user.objects.get(id=p.creator)
-            dic["creatorName"] = u.nickname if u.nickname else u.userName
+            dic["creatorName"] =  p.creator#"少年"#u.nickname if u.nickname else u.userName
             es = get_model(environment, False, projectId=p.id)
             e_list = list()
             for e in es:
@@ -732,6 +593,8 @@ class Keyword:
         kw.method = parameter.get("method", '')
         kw.params = parameter.get("params", kw.params)
         kw.steps = json.dumps(parameter.get("steps", []), ensure_ascii=False)
+        kw.projectId = parameter.get("projectId", 0)
+        kw.projectId = int(kw.projectId) if str(kw.projectId).isdigit() else 0
         try:
             kw.clean()
         except ValidationError as ve:
@@ -866,6 +729,8 @@ class TestCase:
         tc.parameter = parameter.get("parameter", [])
         tc.checkType = parameter.get("checkType", None)
         tc.checkValue = parameter.get("checkValue", None)
+        tc.checkText = parameter.get("checkText", None)
+        tc.selectText = parameter.get("selectText", None)
         try:
             tc.clean()
         except ValidationError as ve:
@@ -907,6 +772,8 @@ class TestCase:
         except ValueError:
             return JsonResponse.BadRequest("json格式错误")
         # 判断参数有效性
+        tc.projectId = parameter.get("projectId", 0)
+        tc.projectId = int(tc.projectId) if str(tc.projectId).isdigit() else 0
         tc.level = parameter.get("level", 1)
         tc.level = int(tc.level) if str(tc.level).isdigit() else 0
         tc.title = parameter.get("title", None)
@@ -921,6 +788,8 @@ class TestCase:
             tc.beforeLogin.extend(bl);
         tc.checkType = parameter.get("checkType", "")
         tc.checkValue = parameter.get("checkValue", "")
+        tc.checkText = parameter.get("checkText", "")
+        tc.selectText = parameter.get("selectText", "")
         try:
             tc.clean()
         except ValidationError as ve:
@@ -975,7 +844,7 @@ class TestCase:
         tcs = tcs[(page_index - 1) * page_size:page_index * page_size]
         tcs_list = list()
         for tc in tcs:
-            dic = model_to_dict(tc, ["id", "projectId", 'title', 'level', 'remark', 'checkType', 'checkValue'])
+            dic = model_to_dict(tc, ["id", "projectId", 'title', 'level', 'remark', 'checkType', 'checkValue', 'checkText', 'selectText'])
             pro = get_model(project, id=tc.projectId)
             dic["projectName"] = pro.name if pro else ""
             dic["parameter"] = json.loads(tc.parameter) if tc.parameter else []
@@ -993,7 +862,7 @@ class TestCase:
         tc = get_model(testcase, id=testcase_id)
         if not tc:
             return JsonResponse.BadRequest("该测试用例不存在")
-        result = model_to_dict(tc, ["id", "projectId", 'title', 'level', 'remark', 'checkType', 'checkValue'])
+        result = model_to_dict(tc, ["id", "projectId", 'title', 'level', 'remark', 'checkType', 'checkValue', 'checkText', 'selectText'])
         result['projectName'] = get_model(project, id=tc.projectId).name
         result["parameter"] = json.loads(tc.parameter) if tc.parameter else []
         if tc.checkType == "element":
@@ -1029,6 +898,24 @@ class TestCase:
         return JsonResponse.OK(message="ok", data=result)
 
     @staticmethod
+    def copy(request, testcase_id):
+        tc = get_model(testcase, id=testcase_id)
+        if not tc:
+            return JsonResponse.BadRequest("该测试用例不存在")
+        result = model_to_dict(tc, ["id", "projectId", 'title', 'level', 'remark', 'checkType', 'checkValue', 'checkText', 'selectText'])
+        result['projectName'] = get_model(project, id=tc.projectId).name
+        result["parameter"] = json.loads(tc.parameter) if tc.parameter else []
+        if tc.checkType == "element":
+            page_element = get_model(element, id=tc.checkValue)
+            pageId = page_element.pageId if page_element else 0
+            result["pageId"] = pageId;
+        steps = json.loads(tc.steps) if tc.steps else []
+        result["steps"] = steps
+        result["beforeLogin"] = json.loads(tc.beforeLogin) if tc.beforeLogin else []
+        result["createTime"] = tc.createTime.strftime('%Y-%m-%d %H:%M:%S')
+        return JsonResponse.OK(message="ok", data=result)
+
+    @staticmethod
     @post
     def test(request, testcase_id):
         tc = get_model(testcase, id=testcase_id)
@@ -1046,6 +933,7 @@ class TestCase:
             if not (str(browser).isdigit() and int(browser) > 0):
                 return JsonResponse.BadRequest("参数错误：browser应该是个正确的Id")
         r = Result.objects.create(projectId=tc.projectId, testcaseId=tc.id, checkValue=tc.checkValue,
+                                  checkText=tc.checkText, selectText=tc.selectText,
                                   checkType=tc.checkType, title=tc.title, beforeLogin=tc.beforeLogin,
                                   steps=tc.steps, parameter=tc.parameter,
                                   browsers=json.dumps(browsers, ensure_ascii=False),
@@ -1097,7 +985,7 @@ class TestResult:
         tcs_list = list()
         for re in res:
             dic = model_to_dict(re, ["id", "projectId", "taskId", "testcaseId", 'title', 'status', 'checkType',
-                                     'checkValue'])
+                                     'checkValue', 'checkText', 'selectText'])
             dic["parameter"] = json.loads(str(re.parameter)) if re.parameter else []
             task = get_model(Task, id=re.taskId)
             dic["taskName"] = task.name if task else ""
@@ -1115,12 +1003,23 @@ class TestResult:
         return JsonResponse.OK(message="ok", data=result)
 
     @staticmethod
+    def delete(request, result_id):
+        kw = get_model(Result, id=result_id)
+        if not kw:
+            return JsonResponse(404, "该关键字不存在")
+        try:
+            kw.delete()
+        except:
+            return JsonResponse(500, "服务器发生错误")
+        return JsonResponse.OK()
+
+    @staticmethod
     def get(request, result_id):
         re = get_model(Result, id=result_id)
         if not re:
             return JsonResponse.BadRequest("该测试结果不存在")
         result = model_to_dict(re, ["id", "projectId", "taskId", "testcaseId", 'title', 'status', 'checkType',
-                                    'checkValue'])
+                                    'checkValue', 'checkText', 'selectText'])
         result["parameter"] = json.loads(re.parameter) if re.parameter else []
         result["steps"] = json.loads(re.steps) if re.steps else []
         beforeLogin = json.loads(re.beforeLogin) if re.beforeLogin else [];
@@ -1403,6 +1302,7 @@ class TestTasks:
             environments = tc.get("environments", [])
             tc = get_model(testcase, id=tc.get("id", 0))
             r = Result.objects.create(projectId=tc.projectId, testcaseId=tc.id, checkValue=tc.checkValue,
+                                      checkText=tc.checkText, selectText=tc.selectText,
                                       checkType=tc.checkType, title=tc.title, beforeLogin=tc.beforeLogin,
                                       steps=tc.steps, parameter=tc.parameter,
                                       browsers=json.dumps(browsers, ensure_ascii=False),
@@ -1428,6 +1328,8 @@ class Login:
         l.steps = parameter.get("steps", [])
         l.checkType = parameter.get("checkType", "")
         l.checkValue = parameter.get("checkValue", "")
+        l.checkText = parameter.get("checkText", "")
+        l.selectText = parameter.get("selectText", "")
         try:
             l.clean()
         except ValidationError as ve:
@@ -1491,6 +1393,8 @@ class Login:
         l.steps = parameter.get("steps", l.steps)
         l.checkType = parameter.get("checkType", l.checkType)
         l.checkValue = parameter.get("checkValue", l.checkValue)
+        l.checkText = parameter.get("checkText", l.checkText)
+        l.selectText = parameter.get("selectText", l.selectText)
         try:
             l.clean()
         except ValidationError as ve:
@@ -1553,7 +1457,7 @@ class Login:
         ls = ls[(page_index - 1) * page_size:page_index * page_size]
         ls_list = list()
         for l in ls:
-            dic = model_to_dict(l, ["id", "projectId", 'name', 'remark', 'checkType', 'checkValue'])
+            dic = model_to_dict(l, ["id", "projectId", 'name', 'remark', 'checkType', 'checkValue', 'checkText', 'selectText'])
             dic["params"] = json.loads(l.params) if l.params else None
             dic["steps"] = json.loads(l.steps) if l.steps else None
             dic["projectName"] = "" if l.projectId == 0 else get_model(project, id=l.projectId).name
@@ -1570,7 +1474,7 @@ class Login:
         l = get_model(LoginConfig, id=login_id)
         if not l:
             return JsonResponse.BadRequest("该测试用例不存在")
-        dic = model_to_dict(l, ["id", "projectId", 'name', 'remark', 'checkType', 'checkValue'])
+        dic = model_to_dict(l, ["id", "projectId", 'name', 'remark', 'checkType', 'checkValue', 'checkText', 'selectText'])
         dic["projectName"] = "" if l.projectId == 0 else get_model(project, id=l.projectId).name
         dic["params"] = json.loads(l.params) if l.params else None
         steps = json.loads(l.steps) if l.steps else []

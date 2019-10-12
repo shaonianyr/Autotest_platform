@@ -92,14 +92,16 @@ def SplitTaskRan(result_id):
 def SplitTaskRunning(splitResult_id):
     from Product.models import SplitResult, Browser, Environment, Element, Check, Result, EnvironmentLogin, LoginConfig
     import django.utils.timezone as timezone
-    from MiDuoTester.PageObject.Base import PageObject
-    from MiDuoTester.helper.util import get_model
+    from Autotest_platform.PageObject.Base import PageObject
+    from Autotest_platform.helper.util import get_model
     split = SplitResult.objects.get(id=splitResult_id)
     result_ = Result.objects.get(id=split.resultId)
     steps = json.loads(result_.steps) if result_.steps else []
     parameter = json.loads(split.parameter) if split.parameter else {}
     checkType = result_.checkType
     checkValue = result_.checkValue
+    checkText = result_.checkText
+    selectText = result_.selectText
     beforeLogin = json.loads(result_.beforeLogin) if result_.beforeLogin else []
     split.status = 20
     split.save()
@@ -122,6 +124,8 @@ def SplitTaskRunning(splitResult_id):
             login = get_model(LoginConfig, id=bl)
             loginCheckType = login.checkType
             loginCheckValue = login.checkValue
+            loginCheckText = login.checkText
+            loginSelectText = login.selectText
             if not login:
                 split.loginStatus = 3
                 split.status = 50
@@ -208,31 +212,57 @@ def SplitTaskRunning(splitResult_id):
                 if not split.expect:
                     remark = '测试通过'
                 else:
-                    remark = '测试不通过,预期[' + str(split.expect) + '], 但实际结果为[' + str(TestResult) + ']'
+                    remark = '测试不通过,预期结果为["' + checkValue + '"], 但实际结果为["' + driver.current_url + '"]'
             else:
                 if split.expect:
                     remark = '测试通过'
                 else:
-                    remark = '测试不通过,预期[' + str(split.expect) + '], 但实际结果为[' + str(TestResult) + ']'
+                    remark = '测试不通过,预期结果为["' + checkValue + '"], 但实际结果为["' + driver.current_url + '"]'
         elif checkType == Check.TYPE_ELEMENT:
             element = checkValue
+            expect_text = checkText
+            select_text = selectText
             if str(checkValue).isdigit():
                 element = get_model(Element, id=int(element))
             try:
                 PageObject.find_element(driver, element)
-                TestResult = True
+                actual_text = PageObject.find_element(driver, element).text
+                if select_text == 'all':
+                    if expect_text == actual_text:
+                        TestResult = True
+                    else:
+                        TestResult = False
+                    if TestResult:
+                        if split.expect:
+                            remark = '测试通过，预期断言值完全匹配实际断言值。'
+                        else:
+                            remark = '测试不通过，预期结果失败，但实际结果是成功。'
+                    else:
+                        if not split.expect:
+                            remark = '测试通过，预期结果失败，实际结果也是失败。'
+                        else:
+                            remark = '测试不通过，预期结果为["' + expect_text + '"]，但实际结果为["' + actual_text + '"]'
+                else:
+                    if expect_text in actual_text:
+                        TestResult = True
+                    else:
+                        TestResult = False
+                    if TestResult:
+                        if split.expect:
+                            remark = '测试通过，预期断言值包含匹配实际断言值。'
+                        else:
+                            remark = '测试不通过，预期结果失败，但实际结果是成功。'
+                    else:
+                        if not split.expect:
+                            remark = '测试通过，预期结果失败，实际结果也是失败。'
+                        else:
+                            remark = '测试不通过，预期结果为["' + expect_text + '"]，但实际结果为["' + actual_text + '"]'
             except:
                 TestResult = False
-            if not TestResult:
-                if not split.expect:
-                    remark = '测试通过'
-                else:
-                    remark = '测试不通过,预期[' + str(split.expect) + '], 但实际结果为[' + str(TestResult) + ']'
-            else:
-                if split.expect:
-                    remark = '测试通过'
-                else:
-                    remark = '测试不通过,预期[' + str(split.expect) + '], 但实际结果为[' + str(TestResult) + ']'
+                remark = '当前元素定位已改变，请及时更新定位！'
+                
+
+                    
     if driver:
         driver.quit()
     split.status = 30 if TestResult else 40
@@ -245,7 +275,7 @@ def SplitTaskRunning(splitResult_id):
 @task
 def timingRunning():
     from Product.models import Task, TestCase, Result
-    from MiDuoTester.helper.util import get_model
+    from Autotest_platform.helper.util import get_model
     tasks = Task.objects.filter(timing=1)
     for t in tasks:
         browsers = json.loads(t.browsers) if t.browsers else []
@@ -254,7 +284,8 @@ def timingRunning():
             environments = tc.get("environments", [])
             tc = get_model(TestCase, id=tc.get("id", 0))
             r = Result.objects.create(projectId=tc.projectId, testcaseId=tc.id, checkValue=tc.checkValue,
-                                      checkType=tc.checkType, title=tc.title, beforeLogin=tc.beforeLogin,
+                                      checkType=tc.checkType, checkText=tc.checkText, selectText=tc.selectText,
+                                      title=tc.title, beforeLogin=tc.beforeLogin,
                                       steps=tc.steps, parameter=tc.parameter,
                                       browsers=json.dumps(browsers, ensure_ascii=False),
                                       environments=json.dumps(environments, ensure_ascii=False), taskId=t.id)
@@ -264,7 +295,7 @@ def timingRunning():
 class Step:
     def __init__(self, keyword_id, values):
         from .models import Keyword, Params
-        from MiDuoTester.helper.util import get_model
+        from Autotest_platform.helper.util import get_model
         self.keyword = get_model(Keyword, id=keyword_id)
         self.params = [Params(value) for value in values]
 

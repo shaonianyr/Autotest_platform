@@ -23,15 +23,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            <a class="navbar-brand" href="/admin/index">POM - 自动化测试平台
             </a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right color-white">
             <li>
-                <a class=" pointer">退出登录</a>
+                <a href="/login/" class=" pointer">退出登录</a>
             </li>
-            <li><span class="mar-rignt-100">少年</span></li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
         </ul>
     </nav>
     <!-- 头部bar end -->
@@ -195,7 +195,9 @@
 <script>
     var resultId = $("#testcaseTitle").attr("data-resultId");
     init();
+    value();
 
+    
     function init() {
         $.ajax({
             url: '/api/v1/result/' + resultId,
@@ -215,9 +217,8 @@
                         $("#result").html('<div class="color-green">' + resultText + '</div>');
                     }
                     $("#checkType").html(res.data.checkType);
-                    $("#checkValue").html(res.data.checkValue);
                     var logins = res.data.beforeLogin;
-                    $("#logins").html(logins.length > 0 ? logins.join("  ,  ") : "-");
+                    $("#logins").html(logins.length > 0 ? logins.join("  ,  ") : "无");
                     var splitResult = res.data.splitResults;
                     var sr = "";
                     for (var i = 0; i < splitResult.length; i++) {
@@ -247,6 +248,42 @@
                     $("#message").html(res.message);
                 }
             }
+        });
+    }
+
+    function value()
+    {
+        var duanyanId,duanyanType,duanyanText;
+        $.ajax({
+                url: '/api/v1/result/' + resultId,
+                type: 'post',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.code == 200) {
+                        duanyanId = res.data.checkValue;
+                        duanyanType = res.data.checkType;
+                        duanyanText = res.data.checkText;
+                        if (res.data.selectText == 'all')
+                            selectType = '匹配类型为： 完全匹配';
+                        else
+                            selectType = '匹配类型为： 包含匹配';
+                        if (duanyanType == 'url')
+                            $("#checkValue").html("打开的url是否为 ： " + res.data.checkValue);
+                        else
+                            {
+                                $.ajax({
+                                    url: '/api/v1/element/' + duanyanId,
+                                    type: 'post',
+                                    dataType: 'json',
+                                    success: function (res) {
+                                    if (res.code == 200) {
+                                        $("#checkValue").html("【 " + res.data.name + " 】  是否为 : '&nbsp;&nbsp;&nbsp;"+ duanyanText +"  &nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（&nbsp;" + selectType + "&nbsp;）");
+                                        }
+                                    }
+                                });
+                            }
+                    }
+                }
         });
     }
 </script>

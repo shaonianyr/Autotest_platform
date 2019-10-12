@@ -31,10 +31,10 @@ def login(request):
     
     return render(request, 'page/1登录.html')
 
-
+@login_required
 def logout(request):
     auth.logout(request)
-    return render(request, 'page/1登录.html')
+    return render(request, 'page/1登录.htm')
 
 
 @login_required
@@ -50,7 +50,7 @@ def project(request):
 @login_required
 def project_config(request, project_id):
     from Product.models import Project
-    from MiDuoTester.helper.util import get_model
+    from Autotest_platform.helper.util import get_model
     p = get_model(Project, id=project_id)
     name = p.name if p else ""
     return render(request, "page/2项目管理--环境配置.html", {"projectId": project_id, "projectName": name})
@@ -79,7 +79,7 @@ def keyword_create(request):
 @login_required
 def keyword_edit(request, keyword_id):
     from Product.models import Keyword, Project
-    from MiDuoTester.helper.util import get_model
+    from Autotest_platform.helper.util import get_model
     kw = get_model(Keyword, id=keyword_id)
     projectId = kw.projectId if kw else 0
     p = get_model(Project, id=projectId)

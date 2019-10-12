@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 {% load static %}
 <head>
@@ -23,15 +23,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            <a class="navbar-brand" href="/admin/index">POM - 自动化测试平台
             </a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right color-white">
             <li>
-                <a class=" pointer">退出登录</a>
+                <a href="/login/" class=" pointer">退出登录</a>
             </li>
-            <li><span class="mar-rignt-100">少年</span></li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
         </ul>
     </nav>
     <!-- 头部bar end -->
@@ -101,7 +101,7 @@
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label">所属项目</label>
                                     <div class="col-sm-10">
-                                        <select id='projectSelect' disabled="disabled" class="form-control">
+                                        <select id='projectSelect' class="form-control">
                                         </select>
                                     </div>
                                 </div>
@@ -520,10 +520,21 @@
         $("#step-keyword").append("<option value='0'>选择关键字</option>");
         $("#page").append("<option value='0'>选择页面</option>");
         $.ajax({
+            url: '/api/v1/project?p=1',
+            type: 'post',
+            dataType: 'json',
+            data: JSON.stringify({"pageSize": 9999999}),
+            success: function (res) {
+                for (var i = 0; i < res.data.projects.length; i++) {
+                        $("#projectSelect").append('<option value="' + res.data.projects[i].id + '">' + res.data.projects[i].name + '</option>');
+                }
+            }
+        });
+        $.ajax({
             url: '/api/v1/keyword?p=1',
             type: 'post',
             dataType: 'json',
-            data: JSON.stringify({"projectId": projectId, "pageSize": 9999999}),
+            data: JSON.stringify({"pageSize": 9999999}),
             success: function (res) {
                 if (res.code == 200) {
                     for (var i = 0; i < res.data.keywords.length; i++) {
@@ -546,7 +557,6 @@
             }
         });
     }
-
 
     $("#page").on('change', function () {
         var pageId = $("#page option:selected").val();
@@ -671,6 +681,7 @@
     function createKeyword() {
         var keywordId = $("#keywordName").attr("data-id");
         var name, projectId, package, clazz, method, params = [], remark, type, steps = [];
+        projectId = $("#projectSelect option:selected").val();
         name = $("#keywordName").val();
         package = $("#package").val();
         clazz = $("#clazz").val();
@@ -693,6 +704,7 @@
             "method": method,
             "remark": remark,
             "steps": steps,
+            "projectId": projectId,
         }
         $.ajax({
             url: '/api/v1/keyword/edit/' + keywordId,

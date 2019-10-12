@@ -46,7 +46,7 @@ function dataTableBuid() {
     $('#dataTables-example').dataTable({
         "bRetrieve": true,
         "bPaginate": true,  //是否显示分页
-        "bSort": false,     //是否支持排序功能
+        "bSort": true,     //是否支持排序功能
         "bAutoWidth": false, //自动宽度
         "serverSide": false,
         "pageLength": 10,

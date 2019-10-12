@@ -22,15 +22,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/index">POM - 自动化测试平台
+            <a class="navbar-brand" href="/admin/index">POM - 自动化测试平台
             </a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right color-white">
             <li>
-                <a class=" pointer">退出登录</a>
+                <a href="/login/" class=" pointer">退出登录</a>
             </li>
-            <li><span class="mar-rignt-100">少年</span></li>
+            <li><span class="mar-rignt-100">{{user}}</span></li>
         </ul>
     </nav>
     <!-- 头部bar end -->
@@ -183,6 +183,29 @@
     </div>
     <!-- /. PAGE WRAPPER  -->
 </div>
+<!--删除询问弹窗提示-->
+<div class="modal fade" id="DelXProject1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">删除</h4>
+            </div>
+            <div class="modal-body">
+                <p>请确认是否删除本条测试结果</p>
+                <p class="js_DELmessage text-danger"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="determine()">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!--end 删除询问弹窗提示-->
 <script src="{% static 'assets/js/jquery-1.10.2.js' %}"></script>
 <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'assets/js/jquery.metisMenu.js' %}"></script>
@@ -201,6 +224,7 @@
     });
 </script>
 <script>
+    var DeleteID = 0;
     seleList();
     ListsNew();
 
@@ -256,7 +280,13 @@
                 $('#dataTables-example').dataTable().fnClearTable();//清空数据.fnClearTable();//清空数据
                 $('#dataTables-example').dataTable().fnDestroy(); //还原初始化了的datatable
                 for (var i = 0; i < res.data.results.length; i++) {
-                    var num_status;
+                    var result_list = 0, num_status;
+                    if (res.data.results[i].params == null) {
+                        result_list = 0;
+                    } else {
+                        result_list = res.data.results[i].params.length;
+                    }
+                    ;
                     if (res.data.results[i].status == 10) {
                         num_status = "队列中";
                     } else if (res.data.results[i].status == 20) {
@@ -266,11 +296,11 @@
                     } else {
                         num_status = "失败";
                     }
-                    $(".js_table").append('<tr class="odd"><td class="center">' + (i + 1) + '</td><td class="center">' + res.data.results[i].title + '</td><td class="center">' + res.data.results[i].projectName + '</td><td class="center">' + res.data.results[i].taskName + '</td><td class="center">' + num_status + '</td><td class="center">' + res.data.results[i].createTime + '</td><td class="center"><a href="javascript:void(0);" class="pointer" id="' + res.data.results[i].id + '" onclick="seeDetails(this)">查看</a></td></tr>');
+                    $(".js_table").append('<tr class="odd"><td class="center">' + (i + 1) + '</td><td class="center">' + res.data.results[i].title + '</td><td class="center">' + res.data.results[i].projectName + '</td><td class="center">' + res.data.results[i].taskName + '</td><td class="center">' + num_status + '</td><td class="center">' + res.data.results[i].createTime + '</td><td class="center"><a href="javascript:void(0);" class="pointer" id="' + res.data.results[i].id + '" onclick="seeDetails(this)">查看</a> - <a href="javascript:void(0);" class="pointer" Did="' + res.data.results[i].id + '" onclick="deleteNew(this)">删除</a></td></tr>');
                 }
                 $('#dataTables-example').dataTable({
                     "bPaginate": true,  //是否显示分页
-                    "bSort": false,     //是否支持排序功能
+                    "bSort": true,     //是否支持排序功能
                     "bAutoWidth": false, //自动宽度
                     "serverSide": false,
                     "pageLength": 10,
@@ -310,7 +340,13 @@
                 $('#dataTables-example').dataTable().fnClearTable();//清空数据.fnClearTable();//清空数据
                 $('#dataTables-example').dataTable().fnDestroy(); //还原初始化了的datatable
                 for (var i = 0; i < res.data.results.length; i++) {
-                    var num_status;
+                    var result_list = 0, num_status;
+                    if (res.data.results[i].params == null) {
+                        result_list = 0;
+                    } else {
+                        result_list = res.data.results[i].params.length;
+                    }
+                    ;
                     if (res.data.results[i].status == 10) {
                         num_status = "队列中";
                     } else if (res.data.results[i].status == 20) {
@@ -320,11 +356,11 @@
                     } else {
                         num_status = "失败";
                     }
-                    $(".js_table").append('<tr class="odd"><td class="center">' + (i + 1) + '</td><td class="center">' + res.data.results[i].title + '</td><td class="center">' + res.data.results[i].projectName + '</td><td class="center">' + res.data.results[i].taskName + '</td><td class="center">' + num_status + '</td><td class="center">' + res.data.results[i].createTime + '</td><td class="center"><a href="javascript:void(0);" class="pointer" id="' + res.data.results[i].id + '" onclick="seeDetails(this)">查看</a></td></tr>');
+                    $(".js_table").append('<tr class="odd"><td class="center">' + (i + 1) + '</td><td class="center">' + res.data.results[i].title + '</td><td class="center">' + res.data.results[i].projectName + '</td><td class="center">' + res.data.results[i].taskName + '</td><td class="center">' + num_status + '</td><td class="center">' + res.data.results[i].createTime + '</td><td class="center"><a href="javascript:void(0);" class="pointer" id="' + res.data.results[i].id + '" onclick="seeDetails(this)">查看</a> - <a href="javascript:void(0);" class="pointer" Did="' + res.data.results[i].id + '" onclick="deleteNew(this)">删除</a></td></tr>');
                 }
                 $('#dataTables-example').dataTable({
                     "bPaginate": true,  //是否显示分页
-                    "bSort": false,     //是否支持排序功能
+                    "bSort": true,     //是否支持排序功能
                     "bAutoWidth": false, //自动宽度
                     "serverSide": false,
                     "pageLength": 10,
@@ -409,6 +445,34 @@
         $('#pzTime').datetimepicker('setEndDate', endTime);
         $("#dtp_input_end").attr("value", endTimeT)
     });
+
+    /*删除询问方法*/
+    function deleteNew(_this) {
+        $('#DelXProject1').modal('show');
+        DeleteID = $(_this).attr('Did');
+        $(".js_DELmessage").html("");
+    }
+
+    /*删除方法*/
+    function determine() {
+        $.ajax({
+            url: '/api/v1/result/delete/' + DeleteID,
+            type: 'get',
+            //data:formParam,
+            dataType: 'json',
+            success: function (res) {
+                if (res.code == 200) {
+                    setTimeout(function () {
+                        //重新获取下列表
+                        search();
+                    }, 1000)
+                    $('#DelXProject1').modal('hide');
+                } else {
+                    $(".js_DELmessage").html(res.message);
+                }
+            }
+        });
+    }
 
 </script>
 </body>

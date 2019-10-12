@@ -1,13 +1,17 @@
 import django.utils.timezone as timezone
 from django.core.exceptions import ValidationError
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
+import requests
+import json
+import random
+import time
 
 # Create your models here.
 class Project(models.Model):
     name = models.CharField(max_length=20, null=False)
     remark = models.TextField(null=True)
-    creator = models.IntegerField(null=False)
+    creator = models.CharField(max_length=20, null=False, default='少年')
     createTime = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -155,6 +159,8 @@ class TestCase(models.Model):
     parameter = models.TextField()
     checkType = models.TextField()
     checkValue = models.TextField()
+    checkText = models.TextField(null=True)
+    selectText = models.TextField(null=True)
     createTime = models.DateTimeField(default=timezone.now)
     remark = models.TextField(null=True)
 
@@ -172,6 +178,8 @@ class TestCase(models.Model):
         parameter = self.parameter
         checkType = self.checkType
         checkValue = self.checkValue
+        checkText = self.checkText
+        selectText = self.selectText
         login = self.beforeLogin
         if not isinstance(login, list):
             raise ValidationError({'beforeLogin': '无效的登录配置'})
@@ -189,19 +197,19 @@ class TestCase(models.Model):
         for s in step:
             if not isinstance(s, dict):
                 raise ValidationError({'step': '无效的操作步骤 : step'})
-            if not "keywordId" in s:
-                raise ValidationError({'step': '无效的操作步骤 : keywordId'})
-            keywordId = int(s.get("keywordId")) if str(s.get("keywordId")).isdigit() else 0
-            if keywordId < 1:
-                raise ValidationError({'step': '无效的操作步骤 : keywordId'})
-            if not ("values" in s and isinstance(s.get("values"), list)):
-                raise ValidationError({'step': '无效的操作步骤 : values'})
-            values = s.get("values")
-            for value in values:
-                try:
-                    Params(value)
-                except ValueError:
-                    raise ValidationError({'step': '无效的操作步骤 : value '})
+        #     if not "keywordId" in s:
+        #         raise ValidationError({'step': '无效的操作步骤 1 : keywordId'})
+        #     keywordId = int(s.get("keywordId")) if str(s.get("keywordId")).isdigit() else 0
+        #     if keywordId < 1:
+        #         raise ValidationError({'step': '无效的操作步骤 : keywordId'})
+        #     if not ("values" in s and isinstance(s.get("values"), list)):
+        #         raise ValidationError({'step': '无效的操作步骤 : values'})
+        #     values = s.get("values")
+        #     for value in values:
+        #         try:
+        #             Params(value)
+        #         except ValueError:
+        #             raise ValidationError({'step': '无效的操作步骤 : value '})
         if checkType:
             if checkValue:
                 try:
@@ -259,22 +267,51 @@ class Browser(models.Model):
             raise ValidationError({'value': '无效的浏览器控制器'})
 
     def buid(self):
-        from selenium import webdriver
         browser = self.value.lower().strip() if self.value else ""
-        if browser == 'chrome':
-            browser = webdriver.Chrome()
-        elif browser == 'firefox':
-            browser = webdriver.Firefox()
-        elif browser == 'edge':
-            browser = webdriver.Edge()
-        elif browser == 'ie':
-            from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-            DesiredCapabilities.INTERNETEXPLORER['ignoreProtectedModeSettings'] = True
-            browser = webdriver.Ie()
+        if browser != 'android':
+            from selenium import webdriver
+            if browser == 'chrome':
+                from selenium.webdriver.chrome.options import Options
+                options = Options()
+                options.add_argument('--headless')
+                options.add_argument('--no-sandbox')
+                options.add_argument('--disable-dev-shm-usage')
+                browser = webdriver.Chrome(chrome_options=options)
+            elif browser == 'firefox':
+                browser = webdriver.Firefox()
+            elif browser == 'edge':
+                browser = webdriver.Edge()
+            elif browser == 'ie':
+                from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+                DesiredCapabilities.INTERNETEXPLORER['ignoreProtectedModeSettings'] = True
+                browser = webdriver.Ie()
+            else:
+                browser = webdriver.Chrome()
+            browser.maximize_window()
+            return browser
         else:
-            browser = webdriver.Chrome()
-        browser.maximize_window()
-        return browser
+            from appium import webdriver
+            desired_caps = {
+
+                'platformName': 'Android',
+
+                'platformVersion': '9',
+
+                'deviceName': '13b7cc66',
+
+                'appPackage': 'com.android.browser',
+
+                'appActivity': 'com.android.browser.BrowserActivity',
+
+                "noReset": True,
+
+                "noSign": True
+
+            }
+            browser = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
+            time.sleep(2)
+            return browser
+
     # def buid(self):
     #     from selenium import webdriver
     #     browser = self.value.lower().strip() if self.value else ""
@@ -315,6 +352,8 @@ class Result(models.Model):
     steps = models.TextField(null=False)
     checkType = models.TextField()
     checkValue = models.TextField()
+    checkText = models.TextField(null=True)
+    selectText = models.TextField(null=True)
     createTime = models.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -333,6 +372,7 @@ class SplitResult(models.Model):
     expect = models.BooleanField()
     status = models.IntegerField(default=10)  # 10 排队中 20 测试中 30 成功  40 失败 50跳过
     remark = models.TextField(null=True)
+    
 
     class Meta:
         db_table = 'SplitResult'
@@ -420,6 +460,8 @@ class LoginConfig(models.Model):
     remark = models.TextField(null=True)
     checkType = models.TextField(default='')
     checkValue = models.TextField(default='')
+    checkText = models.TextField(default='')
+    selectText = models.TextField(default='')
     steps = models.TextField(null=False)
     params = models.TextField()
     createTime = models.DateTimeField(default=timezone.now)
@@ -432,6 +474,8 @@ class LoginConfig(models.Model):
         step = self.steps
         checkType = self.checkType
         checkValue = self.checkValue
+        checkText = self.checkText
+        selectText = self.selectText
         if not name or 0 >= len(name) or len(name) > 20:
             raise ValidationError({'name': '无效的登录配置名称'})
         if not isinstance(step, list):
@@ -467,26 +511,4 @@ class EnvironmentLogin(models.Model):
         db_table = 'EnvironmentLogin'
 
 
-class User(models.Model):
-    userName = models.CharField(null=False, max_length=20)
-    password = models.CharField(null=False, max_length=50)
-    nickname = models.CharField(null=True, max_length=10)
-    group = models.IntegerField(null=True, default=1)
-    email = models.TextField(null=True)
-    createTime = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        db_table = 'user'
-
-    def clean(self):
-        from MiDuoTester.helper.util import isLegal, validateEmail
-        userName = self.userName
-        password = self.password
-        email = self.email
-        if not (userName and isLegal(userName)):
-            raise ValidationError({'userName': '无效的用户名'})
-        if not (password and isLegal(password)):
-            raise ValidationError({'password': '无效的密码'})
-        if email:
-            if not validateEmail(email):
-                raise ValidationError({'email': '无效的邮箱'})
