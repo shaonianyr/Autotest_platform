@@ -8,16 +8,20 @@ Autotest_platform 是一款基于 POM 模式开发的 Web UI 自动化测试平�
 
 ## 平台功能展示
     1. 首页用图标展示项目以及测试汇总的数据：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/index.png">
 
     2. 测试案例可分项目管理，多个测试项目之间均可通用 "selenium关键字封装"项目 封装好的关键字：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/projectManager.png">
 
     3. 采用 POM 模式设计，每个项目对应管理多个页面，每个页面对应管理多个页面元素的定位：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/pageManager.png">
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/elementManager.png">
 
     4. selenium 的动作也从测试案例中单独抽出来，作为一个函数来调用，同一个动作可以供多个测试案例一起使用，比如每个测试案例里面的输入文本的动作，都可以直接调用这个 "输入文本" 的关键字，关键字封装在 ./Autotest_platform/PageObject/Base.py 里面，对外暴露出两个参数，也就是输入的定位，以及输入的内容，设计测试案例的时候只需要对应填入这两个参数，它就会自动执行对应的 selenium 语句。 Appium 对应的关键字封装在 ./Autotest_platform/PageObject/Base_m.py 里面。
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/seleniumManager.png">
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/setSelenium.png">
 
@@ -44,19 +48,25 @@ Autotest_platform 是一款基于 POM 模式开发的 Web UI 自动化测试平�
         time.sleep(2)
         return browser
 
+
     6. 支持一键快速复制测试案例：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/copyTesecase.png">
 
     7. 支持断言 url 以及 元素两种方式，支持完全匹配和包含匹配两种断言力度，支持测试案例设计过程中的参数化设计：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/assertValue.png">
 
     8. 支持测试案例的前置登录操作，可以在登录配置当中设置：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/loginSetting.png">
 
     9. 生成的测试结果中可展示多种详细的信息报告：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/testReport.png">
 
     10. 支持选择任意的测试案例构建测试集合，支持定时任务测试集合构建：
+
 <img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/timeSetting.png">
 
 ## Windows 安装部署
