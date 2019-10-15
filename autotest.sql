@@ -11,7 +11,7 @@
  Target Server Version : 50727
  File Encoding         : 65001
 
- Date: 12/10/2019 16:53:07
+ Date: 15/10/2019 16:38:28
 */
 
 SET NAMES utf8mb4;
@@ -49,7 +49,7 @@ CREATE TABLE `Environment`  (
   `host` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `remark` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of Environment
@@ -66,7 +66,7 @@ CREATE TABLE `EnvironmentLogin`  (
   `environmentId` int(11) NOT NULL,
   `parameter` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for Result
@@ -118,7 +118,7 @@ CREATE TABLE `SplitResult`  (
   `status` int(11) NOT NULL,
   `remark` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of SplitResult
@@ -130,6 +130,7 @@ INSERT INTO `SplitResult` VALUES (28, 3, 2, 390, 0, '2019-10-12 16:29:12.872981'
 INSERT INTO `SplitResult` VALUES (29, 3, 1, 391, 0, '2019-10-12 16:34:05.900614', '2019-10-12 16:34:05.999614', '2019-10-12 16:34:22.473060', '{\"url\": \"https://www.baidu.com\", \"搜索内容\": \"selenium\", \"expect\": true}', 1, 30, '测试通过，预期断言值包含匹配实际断言值。');
 INSERT INTO `SplitResult` VALUES (30, 3, 2, 392, 0, '2019-10-12 16:50:31.737703', '2019-10-12 16:50:31.771703', '2019-10-12 16:50:46.350411', '{\"url\": \"https://www.baidu.com\", \"搜索内容\": \"selenium\", \"点击位置\": \"147\", \"点击位置name\": \"搜索结果第二行\", \"expect\": true}', 1, 40, '测试不通过,预期结果为[\"https://baike.baidu.com/item/selenium/18266\"], 但实际结果为[\"https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=selenium&rsv_pq=f5c3691100072bb4&rsv_t=ec7fMz%2FMbZo4KuTGxPySj5vJx0A2YdPgM3xlUXFLfyYJMio1kPm2sPYONYA&rqlang=cn&rsv_enter=0&rsv_dl=tb&rsv_sug3=8&inputT=339&rsv_sug4=339\"]');
 INSERT INTO `SplitResult` VALUES (31, 3, 2, 392, 0, '2019-10-12 16:50:31.744708', '2019-10-12 16:50:31.783714', '2019-10-12 16:50:45.487978', '{\"url\": \"https://www.baidu.com\", \"搜索内容\": \"selenium\", \"点击位置\": \"148\", \"点击位置name\": \"搜索结果第三行\", \"expect\": true}', 1, 40, '测试不通过,预期结果为[\"https://baike.baidu.com/item/selenium/18266\"], 但实际结果为[\"https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=selenium&rsv_pq=d00154c30004cfb2&rsv_t=2a36HlFda%2Bw8wEt%2BHhxM8XG5FolwKxt%2BHyzb09aimaIt63mOdCjQaUD7qCg&rqlang=cn&rsv_enter=0&rsv_dl=tb&rsv_sug3=8&inputT=344&rsv_sug4=344\"]');
+INSERT INTO `SplitResult` VALUES (32, 3, 2, 392, 0, '2019-10-15 15:36:10.264188', '2019-10-15 15:36:10.405185', '2019-10-15 15:36:20.879879', '{\"url\": \"https://www.baidu.com\", \"expect\": true}', 1, 30, '测试通过');
 
 -- ----------------------------
 -- Table structure for Task
@@ -145,7 +146,7 @@ CREATE TABLE `Task`  (
   `remark` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `createTime` datetime(6) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -322,7 +323,7 @@ CREATE TABLE `auth_user`  (
 -- ----------------------------
 -- Records of auth_user
 -- ----------------------------
-INSERT INTO `auth_user` VALUES (1, 'pbkdf2_sha256$120000$mANr4ItfvyJT$oZ8VQp1XRVBGQPvqYDayNIgBWlQ6qPaExHAycG2C9RU=', '2019-10-12 14:48:05.598449', 1, '少年', '', '', 'licetianyr@163.com', 1, 1, '2019-06-25 15:23:34.647242');
+INSERT INTO `auth_user` VALUES (1, 'pbkdf2_sha256$120000$mANr4ItfvyJT$oZ8VQp1XRVBGQPvqYDayNIgBWlQ6qPaExHAycG2C9RU=', '2019-10-15 15:30:15.584046', 1, '少年', '', '', 'licetianyr@163.com', 1, 1, '2019-06-25 15:23:34.647242');
 INSERT INTO `auth_user` VALUES (3, 'pbkdf2_sha256$120000$1250ZUe8JYWu$63fvWf6X7+5gDiJN+kfxG/tzkRpKoZVUhzp8TNJTKEo=', NULL, 0, 'guest', '', '', '', 1, 1, '2019-10-12 14:45:53.000000');
 
 -- ----------------------------
@@ -525,7 +526,7 @@ INSERT INTO `django_session` VALUES ('hz7vguy3r2s4s206w8ivuj1f2z55g5to', 'MzZlZj
 INSERT INTO `django_session` VALUES ('m3911plbarr03vaqh3i2nqqythxo423x', 'MzZlZjUyM2IyYTQwNTI4NjJhMmQxZWMyMWZiYWY2OTQ1NTM4MGU5NTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkMzE1MDY0OTQwMjg5NWM5N2VmOGJiZTcwMjAwZGY0MDE0NzgxYTE1IiwidXNlciI6Ilx1NWMxMVx1NWU3NCJ9', '2019-09-23 09:57:27.664814');
 INSERT INTO `django_session` VALUES ('ph4el25r8yhjjo6ohxp4s8gm6s08hvf1', 'MzZlZjUyM2IyYTQwNTI4NjJhMmQxZWMyMWZiYWY2OTQ1NTM4MGU5NTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkMzE1MDY0OTQwMjg5NWM5N2VmOGJiZTcwMjAwZGY0MDE0NzgxYTE1IiwidXNlciI6Ilx1NWMxMVx1NWU3NCJ9', '2019-08-21 16:40:04.397940');
 INSERT INTO `django_session` VALUES ('u1225wwxkrwwm87ynodr1xy0d6y2o8s9', 'MzZlZjUyM2IyYTQwNTI4NjJhMmQxZWMyMWZiYWY2OTQ1NTM4MGU5NTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkMzE1MDY0OTQwMjg5NWM5N2VmOGJiZTcwMjAwZGY0MDE0NzgxYTE1IiwidXNlciI6Ilx1NWMxMVx1NWU3NCJ9', '2019-09-20 16:20:02.409440');
-INSERT INTO `django_session` VALUES ('vn3rs8ypn1a6mgua98fetxdvtesixzor', 'OGI0YTlkYjIzMDliOTlhZDAwM2EwYjE0MjUyMjhlNjIxYTYzYzY5MTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI2ZTNhMDlmOWJiMjg4ZjYyN2E2YzAzN2U4OTdhNDQxYzEyMzdlYjVmIiwidXNlciI6Ilx1NWMxMVx1NWU3NCJ9', '2019-10-26 14:48:05.613446');
+INSERT INTO `django_session` VALUES ('xznek451id1dnpufm5vjpc9aq2x7vyvy', 'MDM1Y2Y3NjFmYTc5ZGEzOTQ1ZTc0NTE4ZmRkZmJmMTEwZDU1YTVhMTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI2ZTNhMDlmOWJiMjg4ZjYyN2E2YzAzN2U4OTdhNDQxYzEyMzdlYjVmIn0=', '2019-10-29 15:30:15.589046');
 INSERT INTO `django_session` VALUES ('zm017hw31xm51vph2mf6ljh56fcby7hv', 'MzZlZjUyM2IyYTQwNTI4NjJhMmQxZWMyMWZiYWY2OTQ1NTM4MGU5NTp7Il9hdXRoX3VzZXJfaWQiOiIxIiwiX2F1dGhfdXNlcl9iYWNrZW5kIjoiZGphbmdvLmNvbnRyaWIuYXV0aC5iYWNrZW5kcy5Nb2RlbEJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiJkMzE1MDY0OTQwMjg5NWM5N2VmOGJiZTcwMjAwZGY0MDE0NzgxYTE1IiwidXNlciI6Ilx1NWMxMVx1NWU3NCJ9', '2019-08-23 08:46:12.172529');
 
 -- ----------------------------
@@ -709,7 +710,7 @@ CREATE TABLE `login`  (
   `checkText` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `selectText` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for page
@@ -722,7 +723,7 @@ CREATE TABLE `page`  (
   `remark` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
   `createTime` datetime(6) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of page
@@ -741,7 +742,7 @@ CREATE TABLE `project`  (
   `createTime` datetime(6) NULL DEFAULT NULL,
   `creator` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of project

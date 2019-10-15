@@ -312,33 +312,6 @@ class Browser(models.Model):
             time.sleep(2)
             return browser
 
-    # def buid(self):
-    #     from selenium import webdriver
-    #     browser = self.value.lower().strip() if self.value else ""
-    #     if browser == 'chrome':
-    #         from selenium.webdriver.chrome.options import Options
-    #         options = Options()
-    #         options.add_argument('--headless')
-    #         options.add_argument('--no-sandbox')
-    #         options.add_argument('--disable-dev-shm-usage')
-    #         browser = webdriver.Chrome(executable_path="/usr/bin/chromedriver", chrome_options=options)
-    #     elif browser == 'firefox':
-    #         from selenium.webdriver import FirefoxOptions
-    #         opts = FirefoxOptions()
-    #         opts.add_argument("--headless")
-    #         browser = webdriver.Firefox(firefox_options=opts)
-    #     elif browser == 'edge':
-    #         browser = webdriver.Edge()
-    #     elif browser == 'ie':
-    #         from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-    #         DesiredCapabilities.INTERNETEXPLORER['ignoreProtectedModeSettings'] = True
-    #         browser = webdriver.Ie()
-    #     else:
-    #         browser = webdriver.Chrome()
-    #     browser.maximize_window()
-    #     return browser
-
-
 class Result(models.Model):
     title = models.CharField(max_length=200, null=False)
     taskId = models.IntegerField(null=True, default=0)
