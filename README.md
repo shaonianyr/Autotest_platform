@@ -6,6 +6,8 @@ Autotest_platform 是一款基于 POM 模式开发的 Web UI 自动化测试平�
 
 平台构建相关技术栈：python + django + mysql + RabbitMQ + celery + selenium
 
+平台后端 POM 原理层脚本 Demo 展示：[pom_autotest](https://github.com/ShaoNianyr/pom_autotest)
+
 ## 平台功能展示
     1. 首页用图标展示项目以及测试汇总的数据：
 
@@ -123,7 +125,7 @@ python36 -m pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/si
 
 在 Navicat Premium 12 中新建连接，如图所示设置：
 
-<img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/linkDockerMysql.png.png">
+<img src="https://github.com/ShaoNianyr/Autotest_platform/blob/master/pictures/linkDockerMysql.png">
 
 点开我们的数据库，右键然后运行文件，执行如下设置，并导入 autotest.sql:
 
