@@ -4,7 +4,7 @@ billiard==3.3.0.23
 celery==3.1.26.post2
 certifi==2019.6.16
 chardet==3.0.4
-Django==2.1.11
+Django==2.2.24
 django-celery==3.3.0
 django-celery-beat==1.5.0
 django-timezone-field==3.0
