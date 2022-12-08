@@ -2,7 +2,7 @@ amqp==1.4.9
 anyjson==0.3.3
 billiard==3.3.0.23
 celery==3.1.26.post2
-certifi==2019.6.16
+certifi==2022.12.7
 chardet==3.0.4
 Django==2.1.11
 django-celery==3.3.0
